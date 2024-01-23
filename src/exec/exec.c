@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 10:04:08 by blax              #+#    #+#             */
-/*   Updated: 2024/01/23 21:13:22 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/23 21:28:35 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,33 +101,33 @@ void	execute_command(t_node *node, int *fd_in, int *fd_out)
 
 void	execute_command_node(t_node *node, t_env *env)
 {
-	// if (node->id == 0 && node->next == NULL)
-	// 	verify_and_exec_builtin(node, env, 1);
-	// else
-	// {
-	// 	int	fd_in[2];
-	// 	int	fd_out[2];
+	if (node->id == 0 && node->next == NULL)
+		verify_and_exec_builtin(node, env, 1);
+	else
+	{
+		int	fd_in[2];
+		int	fd_out[2];
 
-	// 	fd_in[0] = STDIN_FILENO;
-	// 	fd_in[1] = STDOUT_FILENO;
-	// 	fd_out[0] = STDIN_FILENO;
-	// 	fd_out[1] = STDOUT_FILENO;
-	// 	while (node != NULL)
-	// 	{
-	// 		if (node->next != NULL)
-	// 			pipe(fd_out);
-	// 		verify_and_exec_builtin(node, env, 0);
-	// 		execute_command(node, fd_in, fd_out);
-	// 		if (node->next != NULL)
-	// 		{
-	// 			close(fd_out[1]);
-	// 			if (fd_in[0] != STDIN_FILENO)
-	// 				close(fd_in[0]);
-	// 			fd_in[0] = fd_out[0];
-	// 		}
-	// 		node = node->next;
-	// 	}
-	// }
+		fd_in[0] = STDIN_FILENO;
+		fd_in[1] = STDOUT_FILENO;
+		fd_out[0] = STDIN_FILENO;
+		fd_out[1] = STDOUT_FILENO;
+		while (node != NULL)
+		{
+			if (node->next != NULL)
+				pipe(fd_out);
+			verify_and_exec_builtin(node, env, 0);
+			execute_command(node, fd_in, fd_out);
+			if (node->next != NULL)
+			{
+				close(fd_out[1]);
+				if (fd_in[0] != STDIN_FILENO)
+					close(fd_in[0]);
+				fd_in[0] = fd_out[0];
+			}
+			node = node->next;
+		}
+	}
 
 	// int	fd_out[2];
 
@@ -136,7 +136,7 @@ void	execute_command_node(t_node *node, t_env *env)
 	// 	perror("pipe");
 	// 	exit(EXIT_FAILURE);
 	// }
-	verify_and_exec_builtin(node, env, 1);
+	// verify_and_exec_builtin(node, env, 1);
 	// execute_command(node, fd_in, fd_out);
 	// if (!is_last)
 	// {

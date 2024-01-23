@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:00:04 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 20:22:34 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/23 21:46:11 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ static void	print_env_var(t_env *env)
 	current = env->first;
 	while (current != NULL)
 	{
+		ft_putstr_fd("declare -x ", STDOUT_FILENO);
 		ft_putstr_fd(current->name, STDOUT_FILENO);
 		ft_putchar_fd('=', STDOUT_FILENO);
 		ft_putstr_fd(current->content, STDOUT_FILENO);
@@ -35,8 +36,8 @@ char	*get_env_content(const char *str)
 	i = 0;
 	while (str[i] && str[i] != '=')
 		i++;
-	 content = ft_substr(str, i + 1, ft_strlen(str) - i);
-	return(content);
+	content = ft_substr(str, i + 1, ft_strlen(str) - i);
+	return (content);
 }
 
 void	export_error(char *arg)
@@ -72,9 +73,9 @@ void	ft_export(t_node *node, t_env *env)
 	t_env_link	*new_link;
 
 	i = 1;
-	if (!node->tab_exec[1])
+	if (!node->tab_exec[1] || node->tab_exec[1][0] == '#')
 		print_env_var(env);
-	while (node->tab_exec[i])
+	while (node->tab_exec[i] && node->tab_exec[i][0] != '#')
 	{
 		if (check_env_name(node->tab_exec[i]))
 		{
