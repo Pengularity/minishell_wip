@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 10:04:08 by blax              #+#    #+#             */
-/*   Updated: 2024/01/23 18:19:02 by letnitan         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:13:22 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,22 +37,24 @@ void	verify_and_exec_builtin(t_node *node, t_env *env, int pid)
 		exit(EXIT_SUCCESS);
 }
 
-void	setup_redirections(int *fd_in, int *fd_out, int is_last)
-{
-	if (fd_in[0] != STDIN_FILENO)
-	{
-		if (dup2(fd_in[0], STDIN_FILENO) == -1)
-			(perror("dup2"), exit(EXIT_FAILURE));
-		close(fd_in[0]);
-	}
-	if (!is_last)
-	{
-		close(fd_out[0]);
-		if (dup2(fd_out[1], STDOUT_FILENO) == -1)
-			(perror("dup2"), exit(EXIT_FAILURE));
-		close(fd_out[1]);
-	}
-}
+// void	setup_redirections(int *fd_in, int *fd_out)
+// {
+// 	// t_node	*node;
+
+// 	if (fd_in[0] != STDIN_FILENO)
+// 	{
+// 		if (dup2(fd_in[0], STDIN_FILENO) == -1)
+// 			(perror("dup2"), exit(EXIT_FAILURE));
+// 		close(fd_in[0]);
+// 	}
+// 	// if (node->next != NULL)
+// 	// {
+// 	// 	close(fd_out[0]);
+// 	// 	if (dup2(fd_out[1], STDOUT_FILENO) == -1)
+// 	// 		(perror("dup2"), exit(EXIT_FAILURE));
+// 	// 	close(fd_out[1]);
+// 	// }
+// }
 
 void	launch_command(t_node *node)
 {
@@ -65,10 +67,11 @@ void	launch_command(t_node *node)
 	}
 }
 
-void	execute_command(t_node *node, int *fd_in, int *fd_out, int is_last)
+void	execute_command(t_node *node, int *fd_in, int *fd_out)
 {
 	pid_t	pid;
 
+	if (node->next != NULL)
 	pid = fork();
 	if (pid == -1)
 	{
@@ -77,8 +80,8 @@ void	execute_command(t_node *node, int *fd_in, int *fd_out, int is_last)
 	}
 	if (pid == 0)
 	{
-		setup_redirections(fd_in, fd_out, is_last);
-		if (strcmp(node->tab_exec[0], "exit") == 0 && !is_last)
+		// setup_redirections(fd_in, fd_out);
+		if (strcmp(node->tab_exec[0], "exit") == 0)
 			exit(atoi(node->tab_exec[1]));
 		verify_and_exec_builtin(node, NULL, 1);
 		launch_command(node);
@@ -87,7 +90,7 @@ void	execute_command(t_node *node, int *fd_in, int *fd_out, int is_last)
 	{
 		if (fd_in[0] != STDIN_FILENO)
 			close(fd_in[0]);
-		if (!is_last)
+		if (node->next != NULL)
 		{
 			close(fd_out[1]);
 			fd_in[0] = fd_out[0];
@@ -98,6 +101,34 @@ void	execute_command(t_node *node, int *fd_in, int *fd_out, int is_last)
 
 void	execute_command_node(t_node *node, t_env *env)
 {
+	// if (node->id == 0 && node->next == NULL)
+	// 	verify_and_exec_builtin(node, env, 1);
+	// else
+	// {
+	// 	int	fd_in[2];
+	// 	int	fd_out[2];
+
+	// 	fd_in[0] = STDIN_FILENO;
+	// 	fd_in[1] = STDOUT_FILENO;
+	// 	fd_out[0] = STDIN_FILENO;
+	// 	fd_out[1] = STDOUT_FILENO;
+	// 	while (node != NULL)
+	// 	{
+	// 		if (node->next != NULL)
+	// 			pipe(fd_out);
+	// 		verify_and_exec_builtin(node, env, 0);
+	// 		execute_command(node, fd_in, fd_out);
+	// 		if (node->next != NULL)
+	// 		{
+	// 			close(fd_out[1]);
+	// 			if (fd_in[0] != STDIN_FILENO)
+	// 				close(fd_in[0]);
+	// 			fd_in[0] = fd_out[0];
+	// 		}
+	// 		node = node->next;
+	// 	}
+	// }
+
 	// int	fd_out[2];
 
 	// if (!is_last && pipe(fd_out) == -1)
@@ -106,7 +137,7 @@ void	execute_command_node(t_node *node, t_env *env)
 	// 	exit(EXIT_FAILURE);
 	// }
 	verify_and_exec_builtin(node, env, 1);
-	//execute_command(node, fd_in, fd_out, is_last);
+	// execute_command(node, fd_in, fd_out);
 	// if (!is_last)
 	// {
 	// 	close(fd_out[0]);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:00:04 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 17:35:19 by letnitan         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:22:34 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ void	ft_export(t_node *node, t_env *env)
 			if (env->first == NULL)
 				env->first = new_link;
 			env->len++;
-			printf("\nENV->LAST : %s\n", env->last->name);
-			printf("\nENV->LAST->PREV : %s\n", env->last->prev->name);
+			// printf("\nENV->LAST : %s\n", env->last->name);
+			// printf("\nENV->LAST->PREV : %s\n", env->last->prev->name);
 		}
 		else
 			export_error(node->tab_exec[i]);

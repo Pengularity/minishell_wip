@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 08:31:10 by blax              #+#    #+#             */
-/*   Updated: 2024/01/23 18:19:05 by letnitan         ###   ########.fr       */
+/*   Updated: 2024/01/23 21:10:28 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,5 +232,10 @@ char* copy_until_char(char *dest, const char *src, char delimiter);
 //exec.c
 void	execute_command_node(t_node *node, t_env *env);
 void	verify_and_exec_builtin(t_node *node, t_env *env, int pid);
+
+// signals.c
+
+void	handle_sigint(int signum);
+bool	handle_ctrl_d(char *input);
 
 #endif

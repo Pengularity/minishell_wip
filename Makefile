@@ -44,6 +44,7 @@ SRC_FILES = main.c \
 			init/init_data.c \
 			init/init_env.c \
 			env/env_utils.c \
+			signals/signals.c \
 			# builtins/ft_cd.c \
 			# exec/file_redir.c \
 

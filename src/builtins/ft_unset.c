@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 20:21:48 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 16:56:57 by letnitan         ###   ########.fr       */
+/*   Updated: 2024/01/23 20:22:41 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void	remove_env_link(t_env *env, t_env_link *link)
 				env->first = current->next;
 			free(link->name);
 			free(link->content);
-			free(link);
+			// free(link);
 			return ;
 		}
 		previous = current;
