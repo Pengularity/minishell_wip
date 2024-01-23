@@ -1,0 +1,11 @@
+
+On entre dans la boucle principale du lexer où l'on itére sur l'index i de chaque caractere.
+En premier, on ne fais pas attention aux espaces.
+des que l'on a un caractere, on vérifie s'il s'agit d'un guillemet.
+Si s'en ait un, tant qu'on est pas arrivé a la fin d'un guillemet similaire, on itére sur i.
+Quand on en a trouvé un, on s'arrete et on crée le token.
+
+si on a pas de guillemet des le debut, on recupere la chaine tant qu'il n'y a pas d'espaces ou de guillemets.
+puis on crée le token.
+
+puis c'est repartis !

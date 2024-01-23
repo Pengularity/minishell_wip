@@ -1,0 +1,51 @@
+j'ai utilisé cette commande : "echo 'bonjour' > file.txt < file_2.txt > file_3.txt" quel comportement dois avoir ce programme pour un bash originale
+
+Dans un shell Bash original, la commande "echo 'bonjour' > file.txt < file_2.txt > file_3.txt" sera traitée de la manière suivante :
+
+1. Redirection de sortie vers file.txt : La première redirection > redirige la sortie standard de la commande echo vers file.txt. Cependant, cette redirection sera écrasée par la redirection de sortie suivante, donc file.txt ne sera pas modifié ou créé.
+
+2. Redirection d'entrée depuis file_2.txt : La redirection < configure l'entrée standard de la commande echo pour lire à partir de file_2.txt. Si file_2.txt n'existe pas ou ne peut pas être lu, une erreur se produira et la commande ne s'exécutera pas.
+
+3. Redirection de sortie vers file_3.txt : La dernière redirection > redirige la sortie standard de la commande echo vers file_3.txt. C'est cette redirection qui prend effet, et file_3.txt contiendra le texte 'bonjour' si la commande s'exécute avec succès.
+
+4. Exécution de la commande echo : La commande echo 'bonjour' est exécutée avec l'entrée standard provenant de file_2.txt (qui n'est pas utilisée par echo car echo n'a pas besoin d'entrée standard) et la sortie standard allant vers file_3.txt.
+
+En résumé, file_3.txt sera créé ou écrasé avec le contenu 'bonjour', file.txt restera inchangé ou ne sera pas créé, et file_2.txt doit exister pour que la commande s'exécute sans erreur d'entrée. Si file_2.txt n'existe pas ou ne peut pas être ouvert, une erreur sera générée et la commande echo ne s'exécutera pas.
+
+------------------------------------------------------------------------------------------------------
+
+supposons que le fichier file_2.txt n'existe pas, cela génere une erreur. j'ai executé le minishell d'un ami et le sien crée le fichier file.txt car il n'était pas créer, n'execute pas la commande echo et renvoie bien une erreur. J'ai un autre ami pour qui le sien cette fois ci renvoie bien une erreur a l'écran mais crée le fichier file.txt avec a l'interieur le mot 'bonjour' donc il a quand meme executé la commande echo tout en renvoyant une erreur. Et comme on arrive dans l'ordre d'execution de l'invite le file_2.txt avant le file_3.txt, il n'a pas créer le fichier file_3.txt. Qu'en penses tu ? est-ce que l'un a la bonne solution d'apres le bash original ou pas ? ou y a til plusieurs façon de faire du moment que l'on renvoie une erreur ?
+
+Dans le shell Bash original, l'ordre des redirections est important, et elles sont traitées de gauche à droite. Cependant, si une erreur survient lors de la configuration des redirections d'entrée ou de sortie, la commande ne devrait pas s'exécuter. Voici ce qui devrait se passer selon le comportement de Bash :
+
+1. Redirection de sortie vers file.txt : Bash configure la redirection, mais comme elle sera écrasée, file.txt ne devrait pas être créé à ce stade.
+
+2. Redirection d'entrée depuis file_2.txt : Bash tente de configurer l'entrée standard pour lire à partir de file_2.txt. Si le fichier n'existe pas, une erreur se produit. À ce stade, Bash ne devrait pas continuer avec les autres redirections ou l'exécution de la commande.
+
+3. Redirection de sortie vers file_3.txt : Cette étape ne devrait pas être atteinte si une erreur s'est produite à l'étape précédente.
+
+4. Exécution de la commande echo : Si une erreur s'est produite lors de la configuration des redirections, la commande ne devrait pas s'exécuter.
+
+En se basant sur le comportement de Bash :
+
+- Le minishell du premier ami qui crée file.txt mais ne crée pas file_3.txt et ne lance pas la commande echo est incorrect, car file.txt ne devrait pas être créé du tout si une erreur survient avant l'exécution de la commande.
+
+- Le minishell du deuxième ami qui crée file.txt, exécute la commande echo (en écrivant 'bonjour' dans file.txt), mais ne crée pas file_3.txt et renvoie une erreur est également incorrect. La commande echo ne devrait pas s'exécuter si une erreur survient lors de la configuration des redirections.
+
+Le comportement attendu pour Bash est que si une erreur survient lors de la configuration des redirections, aucune des redirections ne devrait prendre effet, la commande ne devrait pas s'exécuter, et une erreur devrait être signalée à l'utilisateur. Il n'y a pas de "plusieurs façons de faire" qui seraient correctes dans ce contexte si vous cherchez à reproduire fidèlement le comportement de Bash.
+
+------------------------------------------------------------------------------------------------------
+
+maintenant la meme question mais cette fois le fichier file_2.txt existe bien. Est-ce que le fichier file.txt doit être créer ou seulement file_3.txt avec ecrit 'bonjour' ?
+
+Si file_2.txt existe bien, alors la commande devrait s'exécuter sans erreur. Voici ce qui devrait se passer selon le comportement de Bash :
+
+1. Redirection de sortie vers file.txt : Cette redirection est configurée, mais elle sera écrasée par la redirection suivante, donc rien ne sera écrit dans file.txt.
+
+2. Redirection d'entrée depuis file_2.txt : L'entrée standard de la commande echo est configurée pour lire à partir de file_2.txt. Cependant, echo n'a pas besoin de lire l'entrée standard car il écrit simplement la chaîne 'bonjour' fournie en argument.
+
+3. Redirection de sortie vers file_3.txt : Cette redirection écrase la précédente, donc la sortie standard de la commande echo est maintenant configurée pour écrire dans file_3.txt.
+
+4. Exécution de la commande echo : La commande echo 'bonjour' est exécutée, et 'bonjour' est écrit dans file_3.txt.
+
+En résumé, seul file_3.txt devrait être créé (ou écrasé s'il existait déjà) avec le contenu 'bonjour'. Le fichier file.txt ne devrait pas être créé ou modifié, car la redirection vers ce fichier a été écrasée par la redirection vers file_3.txt. Le fichier file_2.txt est simplement ouvert pour la lecture mais n'est pas utilisé par la commande echo.

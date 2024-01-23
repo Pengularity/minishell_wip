@@ -1,0 +1,52 @@
+voici ma commande: "echo 'bonjour' > file.txt >file_2.txt | wc -c". Montre moi un exemple concret et détaillé de toutes les étapes (lexer, parser, ast, redirection, execution) ne gere pas les erreurs. explique moi en détaille surotut au niveau des redirections
+
+Pour la commande "echo 'bonjour' > file.txt > file_2.txt | wc -c", voici les étapes détaillées que le shell pourrait suivre, en se concentrant particulièrement sur les redirections :
+1. Lexing
+Le lexer (ou analyseur lexical) prend la commande sous forme de chaîne de caractères et la divise en tokens :
+- echo
+- 'bonjour'
+- >
+- file.txt
+- >
+- file_2.txt
+- |
+- wc
+- -c
+2. Parsing
+Le parser (ou analyseur syntaxique) prend les tokens et les organise en une structure qui reflète la syntaxe de la commande. Il reconnaît les motifs comme les commandes, les redirections et les pipes, et construit un AST qui pourrait ressembler à ceci :
+       PIPE
+       /    \
+ REDIRECT  COMMAND
+   /         |
+REDIRECT    'wc' '-c'
+   |
+COMMAND
+   |
+'echo' 'bonjour'
+
+Chaque nœud REDIRECT contient des informations sur le type de redirection (> dans ce cas) et le fichier cible.
+3. Construction de l'AST
+L'AST est construit de manière à refléter la structure de la commande. Dans cet exemple, le nœud PIPE est la racine, avec un sous-arbre pour la redirection et un autre pour la commande wc.
+4. Redirections et Exécution
+Le shell parcourt l'AST et applique les redirections avant d'exécuter les commandes. Voici comment cela pourrait se dérouler :
+
+Parcours de l'AST et application des redirections :
+- Le shell commence par le nœud PIPE.
+- Il parcourt le sous-arbre gauche et trouve un nœud REDIRECT.
+- Il applique la redirection en ouvrant file.txt et en redirigeant la sortie standard vers ce fichier. Cependant, cette redirection sera écrasée par la suivante, donc rien n'est écrit dans file.txt.
+- Il continue et trouve un autre nœud REDIRECT.
+- Il applique cette redirection en ouvrant file_2.txt et en redirigeant la sortie standard vers ce fichier. C'est cette redirection qui prend effet.
+- Il atteint le nœud COMMAND et exécute echo 'bonjour'. La sortie de cette commande est écrite dans file_2.txt.
+
+Gestion du pipe :
+- Après avoir exécuté le côté gauche du pipe, le shell crée un pipe et exécute le côté droit dans un processus enfant.
+- Dans le processus enfant, il redirige l'entrée standard pour lire à partir du pipe et exécute la commande wc -c.
+- La commande wc -c lit la sortie de la commande echo (qui est maintenant le contenu de file_2.txt) et compte les caractères.
+
+Résumé des étapes de redirection :
+1. Ouvrir file.txt pour la redirection, mais ne pas écrire dedans car elle est écrasée.
+2. Ouvrir file_2.txt pour la redirection et rediriger la sortie de echo vers ce fichier.
+3. Créer un pipe, exécuter echo 'bonjour' avec la sortie redirigée vers file_2.txt.
+4. Exécuter wc -c avec l'entrée venant du pipe, qui lit le contenu de file_2.txt.
+
+C'est ainsi que le shell pourrait gérer les redirections et l'exécution de la commande en utilisant un AST. Notez que dans une implémentation réelle, le shell devrait également gérer les erreurs, comme les fichiers qui ne peuvent pas être ouverts ou les commandes qui ne peuvent pas être exécutées.

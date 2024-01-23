@@ -1,0 +1,123 @@
+
+#include "../../include/minishell.h"
+
+// Fonction pour créer un nœud de redirection
+t_ast_node *create_redirection_node(t_token_type type, char *file, t_ast_node *child) {
+    t_ast_node *node = malloc(sizeof(t_ast_node));
+    if (!node) {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    node->type = AST_REDIRECT;
+    node->content.redirect.type = token_type_to_redirection_type(type); // Convertissez le type de token en type de redirection
+    node->content.redirect.file = strdup(file);
+    node->content.redirect.child = child;
+    return node;
+}
+
+// Fonction pour déterminer si un token est une redirection
+int is_redirection_token(t_token_type type) {
+    return type == T_REDIRECT_IN || type == T_REDIRECT_OUT || type == T_REDIRECT_APPEND || type == T_REDIRECT_HEREDOC;
+}
+
+// Fonction pour convertir le type de token en type de redirection
+t_redirection_type token_type_to_redirection_type(t_token_type type) {
+    switch (type) {
+        case T_REDIRECT_IN: return REDIR_IN;
+        case T_REDIRECT_OUT: return REDIR_OUT;
+        case T_REDIRECT_APPEND: return REDIR_APPEND;
+        case T_REDIRECT_HEREDOC: return REDIR_HEREDOC;
+        default: return -1; // Ajoutez une gestion d'erreur appropriée
+    }
+}
+
+void build_ast(t_tree *tree, t_data *data)
+{
+    t_token *current_token = data->token;
+    t_ast_node *last_command = NULL;
+
+    init_tree(tree);
+    while (current_token) {
+        if (current_token->type_token == T_COMMAND) {
+            // Commencez à collecter les arguments pour la commande
+            tree->args = collect_args(&current_token);
+            last_command = create_command_node(tree->args);
+            tree->current_command = last_command;
+        } else if (is_redirection_token(current_token->type_token)) {
+            // Créez un nœud de redirection et attachez-le au dernier nœud de commande
+            t_ast_node *redir_node = create_redirection_node(current_token->type_token, current_token->str, tree->current_command);
+            tree->current_command = redir_node; // Le dernier nœud de commande est maintenant le nœud de redirection
+        } else if (current_token->type_token == T_PIPE) {
+            // Créez un nœud de pipe et attachez les commandes à gauche et à droite
+            if (tree->ast == NULL) {
+                tree->ast = tree->current_command;
+            } else {
+                t_ast_node *pipe_node = create_pipe_node(tree->ast, tree->current_command);
+                tree->ast = pipe_node; // Mettez à jour la racine de l'AST avec le nouveau nœud de pipe
+            }
+            tree->current_command = NULL; // Réinitialisez pour la prochaine commande après le pipe
+        }
+        current_token = current_token->next; // Passez au token suivant
+    }
+
+    if (tree->current_command && !tree->ast) {
+        // Si une seule commande sans pipe, elle devient la racine de l'AST
+        tree->ast = tree->current_command;
+    }
+}
+
+char **collect_args(t_token **token_ptr) {
+    int num_args = 0;
+    t_token *token = *token_ptr;
+    t_token *temp_token = token; // Utilisé pour compter le nombre d'arguments
+
+    // Compter le nombre d'arguments
+    while (temp_token && temp_token->type_token == T_COMMAND) {
+        num_args++;
+        temp_token = temp_token->next;
+    }
+
+    // Allouer de l'espace pour le tableau d'arguments + NULL terminateur
+    char **args = malloc(sizeof(char*) * (num_args + 1));
+    if (!args) {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+
+    // Collecter les arguments
+    for (int i = 0; i < num_args; i++) {
+        args[i] = strdup(token->str);
+        token = token->next;
+    }
+    args[num_args] = NULL; // Dernier élément à NULL pour terminer le tableau
+
+    // Mettre à jour le pointeur de token pour pointer après la fin des arguments
+    *token_ptr = token;
+
+    return args;
+}
+
+// Fonction pour créer un tableau d'arguments terminé par NULL
+char **create_args_array(t_token *tokens, int start, int end)
+{
+    int size;
+    char **args;
+    int i;
+
+    size = end - start + 1; // +1 pour le NULL de fin
+    args = malloc(sizeof(char*) * size);
+    if (!args)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    i = start;
+    while (i < end)
+    {
+        args[i - start] = ft_strdup(tokens->str);
+        i++;
+    }
+    args[end - start] = NULL; // Dernier élément à NULL pour terminer le tableau
+
+    return (args);
+}

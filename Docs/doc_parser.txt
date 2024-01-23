@@ -1,0 +1,93 @@
+
+Reinitialiser brave/chrome
+rm -rf ~/.config/google-chrome/Singleton*
+rm -rf ~/.config/BraveSoftware/Brave-Browser/Singleton*
+--------------------------------------------------------------------------
+a voir, les noms des fichiers ne sont pas bons
+--------------------------------------------------------------------------
+logique execution des process des commandes
+si une seule commande (un node),
+ si ce n'est pas un builtin, alors on execute un process enfant
+ si builtin dans le process parent
+si plusieurs commandes (plusieurs nodes)
+ tout est executer dans les processus enfant
+--------------------------------------------------------------------------
+les builtins doivent print une erreur si fail
+
+-------------------------------------------------------------------------
+Si on trouve un de ces tokens on envoie un message d'erreur
+"minishell> reserved word
+(a implementer dans le parser, en verifiant que chaque token->str est different):
+! case coproc do done elif else esac fi for function if in select then until while { } time [[ ]]
+awk
+
+ce cas ci ne fonctionne pas au niveau des redirections:
+./minishell "echo |>ouou "
+A REVOIR
+-------------------------------------------------------------------------
+
+cas du sujet:
+exit 5 | exit 6
+echo $?
+
+si tu es dans le dossier
+et que tu supprime le dossier
+il ne faut pas qu'il crash
+
+edesaint@bess-f2r5s4:~/42-cursus/final_minishell$ env -i bash
+edesaint@bess-f2r5s4:/mnt/nfs/homes/edesaint/42-cursus/final_minishell$ env
+PWD=/mnt/nfs/homes/edesaint/42-cursus/final_minishell
+SHLVL=1
+_=/usr/bin/env
+
+env -i (doit tout supprimer ou laisser que quelques info)
+
+------------------------------------------------------------------------
+On compte le nombre de pipes,
+puis on cree et on ajoute les nodes.
+On obtient ainsi: une liste de noeuds qui correspondent au maillon separer par les pipes.
+
+Cela inclut un parsing quasi parfait pour avoir les bons tokens.
+par exemple si on a: echo bonjour'|' et (ce nest pas le cas ici)
+mais supposons qu'on compte un pipe en trop, il faudras gerer le cas ou on s'est trompe
+pour au moins que ca segfault pas.
+
+Ce cas la ne fonctionne pas: a tester: cat <<< bonjour
+il faut ignorer le <<<
+
+-----------------------------------------------------------------------
+DISCUSSION ROBIN KERJEAN (le 18 au soir)
+
+modifier la structure redirections
+
+verifie si la redirection est correcte ou pas avec une fonction systeme de pipex (acess) f_OK etc.
+fd_open(la cible)
+si la redirection est pas valide alors,detecte que tout le maillon va etre merdique
+type du token: erreur
+que y est une erreur ou pas, passer 
+
+verifier un par un les tokens du maillon en cours
+ et mettre a jour les differentes redirections (les reecrire pour le node en cours)
+ passage unique en une seule fois: pour la gestion d'erreur (si une erreur a 1 ne plus la modifier apres meme
+ si il y a une nouvelle erreur puisque le maillon est deja considerer comme etant une erreur)
+ et mettre a jour redir_out par exemle si le type_token est une redirection
+ exemple append et out c'est le meme truc a envoyer a l'execution
+
+pour faire cela: reprendre la meme facon de faire que pour exec_tab
+ attribut type : CMD(une commande qui n'est pas un builtin), builtin, erreur
+ les commandes seront execute avec execve
+
+ reprendre la structure de rokerjean github minishell (env_link etc.)
+
+ voir test d'integration continue (avec le testeur avant de commit ou push sur le github)
+
+ metaphore (code monkey) sans methode
+
+ singletone (facon derive de faire une globale avec une variable static)
+ variable globale (peut etre modifie de n'importe ou)=> pas secure
+ spike
+
+--------------------------------------------------------------------------------------
+ DISCUSSION avec robin 20 JANVIER
+
+ voir mode interactif quand le heredoc, gestion des signals

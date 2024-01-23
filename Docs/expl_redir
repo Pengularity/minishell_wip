@@ -1,0 +1,13 @@
+echo 'bonjour' > file.txt | grep 'bo'
+
+shell ordi: ecris "bonjour" dans file.txt + redirection via le pipe = résulat afficher
+yasuke: ecris "bonjour" dans file.txt (pas de redirection via le pipe)
+chatgpt: le bon comportement est celui de yasuke (debian kalilinux modifie surement le comportement du shell de base)
+
+echo 'bonjour' > file.txt > file_2.txt | grep 'bo'
+
+shell ordi: ecris "bonjour" dans file.txt et file_2.txt et le passe via le pipe
+yasuke: ecris "bonjour" dans file_2.txt (pas ecrit dans file.txt + pas de pipe)
+chatgpt: le bon comportement est celui de yasuke
+
+demander a chatgpt si la version de kalilinux a une version modifié de bash

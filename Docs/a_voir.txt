@@ -1,0 +1,51 @@
+Points à noter ou potentielles améliorations :
+
+- Les commentaires indiquent une intention de sauvegarder et de restaurer les descripteurs de fichiers originaux (save_fd), mais cette fonctionnalité est commentée et non implémentée. Cela pourrait poser problème si l'exécution de l'AST implique plusieurs commandes qui s'attendent à ce que les descripteurs de fichiers standard soient dans un état particulier.
+- La gestion des erreurs pourrait être améliorée. Par exemple, si pipe ou fork échoue, le programme devrait gérer ces erreurs de manière appropriée.
+- Il n'y a pas de gestion des signaux pour les processus enfants, ce qui pourrait être nécessaire pour un shell robuste.
+- La fermeture des descripteurs de fichiers dans les processus enfants est correcte, mais il faut s'assurer que tous les chemins d'exécution, y compris les erreurs, mènent à la fermeture des descripteurs pour éviter les fuites de descripteurs de fichiers.
+- Il n'y a pas de vérification pour s'assurer que node->content.command.args[0] est non nul avant args[0] est non nul avant de l'utiliser dans execvp. Cela pourrait potentiellement conduire à un comportement indéfini si args[0] était nul.
+
+- Dans execute_pipe_node, il semble y avoir un problème avec la gestion des processus enfants. Après la création du premier enfant, le processus parent crée un deuxième enfant sans attendre le premier. Cela pourrait conduire à une situation de concurrence ou à des zombies si le processus parent termine avant les enfants. De plus, le code retourne SUCCESS dans les processus enfants après execute_ast, ce qui n'a pas d'effet puisque execvp ne retourne que si une erreur se produit.
+
+- La fonction execute_command_node attend le processus enfant immédiatement après sa création avec wait(NULL). Cela signifie que chaque commande dans un pipeline est exécutée séquentiellement plutôt que parallèlement. Pour un pipeline, vous voudriez que toutes les commandes s'exécutent en parallèle et que le shell attende ensuite toutes à la fin.
+
+- Il n'y a pas de gestion des codes de sortie des processus enfants. Le shell devrait vérifier si les commandes se sont terminées avec succès ou ont échoué et agir en conséquence.
+
+- Enfin, il n'y a pas de gestion des cas où un nœud de redirection est suivi par autre chose qu'une commande. Par exemple, une redirection suivie d'un pipe nécessiterait une gestion différente, mais le code actuel ne semble pas prendre en compte cette possibilité.
+
+// --------------------------------------------------------------------------------------------------------------------------
+
+D'accord, examinons les points à améliorer un par un et proposons des solutions :
+
+1. Sauvegarde et restauration des descripteurs de fichiers :
+- Avant d'appliquer les redirections, sauvegardez les descripteurs de fichiers standard en utilisant dup.
+- Après l'exécution de la commande, restaurez les descripteurs de fichiers standard en utilisant dup2 pour remettre les copies sauvegardées à leur place originale.
+- Assurez-vous que cela se fait dans un bloc try-finally ou équivalent pour garantir que la restauration se fait même en cas d'erreur.
+
+2. Gestion des erreurs pour pipe et fork :
+- Vérifiez le code de retour de pipe et fork. En cas d'échec, affichez un message d'erreur et terminez le shell ou la commande en cours avec un code d'erreur approprié.
+- Pour fork, utilisez perror pour afficher l'erreur et exit pour terminer le processus enfant.
+
+3. Gestion des signaux pour les processus enfants :
+- Mettez en place des gestionnaires de signaux pour intercepter et gérer les signaux comme SIGINT et SIGCHLD.
+- Utilisez sigaction pour définir les gestionnaires de signaux qui peuvent gérer les signaux de manière appropriée.
+
+4. Fermeture des descripteurs de fichiers :
+- Assurez-vous que tous les descripteurs de fichiers ouverts sont fermés dans tous les chemins d'exécution, y compris les erreurs.
+- Utilisez un bloc finally ou une structure de gestion des erreurs pour garantir que la fermeture se fait.
+
+5. Vérification de args[0] avant execvp :
+- Avant d'appeler execvp, assurez-vous que args[0] n'est pas nul. Si c'est le cas, affichez un message d'erreur et terminez le processus enfant.
+
+6. Exécution parallèle dans les pipelines :
+- Modifiez execute_pipe_node pour que le processus parent n'attende pas immédiatement après la création de chaque processus enfant.
+- Stockez les PID des processus enfants et attendez-les tous après la création de tous les éléments du pipeline.
+
+7. Gestion des codes de sortie des processus enfants :
+- Utilisez waitpid avec l'option WEXITSTATUS pour obtenir le code de sortie de chaque processus enfant.
+- Gérez les codes de sortie en conséquence, par exemple en définissant la variable $? à la dernière commande exécutée.
+
+8. Gestion des redirections suivies d'autres éléments que des commandes :
+- Assurez-vous que votre logique de traitement des redirections peut gérer les cas où une redirection est suivie d'un pipe ou d'une autre redirection.
+- Cela peut nécessiter une réorganisation de la manière dont les redirections sont appliquées et annulées.

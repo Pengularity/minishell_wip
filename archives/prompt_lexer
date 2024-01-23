@@ -1,0 +1,11 @@
+on a une chaine de caractere. A partir de cette chaine, l'objectif est de créer des tokens.
+Pour cela, il faut que des que l'on arrive a un espace alors on crée un token. par exemple
+dans la chaine "bonjour ok", on arrive a l'espace apres le "bonjour", donc "bonjour" devient
+le premier token. on itére sur l'espace, puis si le premier caractere de la chaine est un guillemet
+soit single quote soit double quote, alors on enregistre le type de quote dans une variable et on 
+initialise une variable a true, pour indiquer que l'on est dans une chaine. Si l'on est dans une chaine,
+on itere tant que l'on est pas arrivé a un autre guillemet similaire, c'est a dire celui
+enregistrer dans type quote. La chaine entre guillemet est utilisé pour créer le token en cours.
+De manière generale toutes chaines qui commence par un guillemet doit suivre ce principe,
+que ce soit la première ou la dernière chaine egalement. Par contre "bonjour' ok" devient 
+"bonjour'" pour le premier token, car il n'y a pas eu d'espace.

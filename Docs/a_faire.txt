@@ -1,0 +1,18 @@
+
+Will
+- heredoc
+- gestion des signaux
+- gestion des erreurs
+- voir variable d'environnement du main dans structure tree (pour le path)
+- récuper le path pour executer les commandes
+- faire le builtin "cd" + gérer chemin relatif/absolue
+
+Etienne
+- execution (redirection de fichier)
+- execution (parcourir l'AST)
+- execution (gérer le multi-pipes)
+- faire la fonction de unclosed_quotes (voir helia minishell)
+- les builtins demandés doivent etre appelé si demandés
+
+- vérifier les leaks (bien tout free)
+- faire les tests des builtins, tests avec des erreurs, sans erreurs

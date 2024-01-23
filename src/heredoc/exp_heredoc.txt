@@ -1,0 +1,83 @@
+Pour implémenter la fonction exec_redir_heredoc, vous devez créer un pipe, lire l'entrée de l'utilisateur ligne par ligne jusqu'à ce que le délimiteur soit rencontré, écrire cette entrée dans le pipe, puis rediriger l'entrée standard pour lire à partir du pipe. Voici un exemple de code pour cette fonction :
+
+int exec_redir_heredoc(t_tree *tree, t_ast_node *node)
+{
+    int pipe_fds[2];
+    pid_t pid;
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t nread;
+
+    // Créer un pipe
+    if (pipe(pipe_fds) == -1)
+        return (ft_error("pipe"));
+
+    // Fork pour lire l'entrée dans un processus enfant
+    pid = fork();
+    if (pid == -1)
+    {
+        close(pipe_fds[0]);
+        close(pipe_fds[1]);
+        return (ft_error("fork"));
+    }
+
+    if (pid == 0)
+    {
+        // Enfant: fermer le côté lecture du pipe
+        close(pipe_fds[0]);
+
+        // Lire l'entrée jusqu'au délimiteur
+        while ((nread = getline(&line, &len, stdin)) != -1)
+        {
+            // Si le délimiteur est rencontré, sortir de la boucle
+            if (strncmp(line, node->content.redirect.file, strlen(node->content.redirect.file)) == 0
+                && line[strlen(node->content.redirect.file)] == '\n')
+            {
+                break;
+            }
+            // Écrire l'entrée dans le pipe
+            write(pipe_fds[1], line, nread);
+        }
+
+        // Nettoyage
+        close(pipe_fds[1]);
+        free(line);
+        exit(EXIT_SUCCESS);
+    }
+    else
+    {
+        // Parent: fermer le côté écriture du pipe
+        close(pipe_fds[1]);
+
+        // Sauvegarder le descripteur de fichier actuel de l'entrée standard
+        tree->save_fd = dup(STDIN_FILENO);
+        if (tree->save_fd == -1)
+        {
+            close(pipe_fds[0]);
+            return (ft_error("dup"));
+        }
+
+        // Rediriger l'entrée standard pour lire à partir du pipe
+        if (dup2(pipe_fds[0], STDIN_FILENO) == -1)
+        {
+            close(pipe_fds[0]);
+            return (ft_error("dup2"));
+        }
+
+        // Fermer le côté lecture du pipe, car il est maintenant dupliqué sur l'entrée standard
+        close(pipe_fds[0]);
+
+        // Attendre que l'enfant termine
+        waitpid(pid, NULL, 0);
+    }
+
+    return (SUCCESS);
+}
+
+Dans ce code :
+
+- Un pipe est créé pour communiquer entre le processus parent et l'enfant.
+- Le processus enfant lit l'entrée de l'utilisateur et écrit dans le pipe jusqu'à ce que le délimiteur soit rencontré.
+- Le processus parent redirige STDIN_FILENO pour lire à partir du pipe, sauvegarde l'ancien descripteur de fichier, et attend que l'enfant termine.
+
+Assurez-vous que ft_error est une fonction qui gère correctement les erreurs et que node->content.redirect.file contient le délimiteur correct pour le heredoc. Vous devrez également inclure les en-têtes nécessaires pour getline, fork, waitpid, et les autres appels système utilisés.
