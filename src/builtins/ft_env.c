@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 07:33:34 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 14:25:42 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/23 17:36:11 by letnitan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,18 @@
 
 void	ft_env(t_node *node, t_env *env)
 {
-	t_env_element	*current;
+	t_env_link	*current;
 
-	if (!env->first)
-	{
-		ft_putendl_fd("env: No such file or directory", STDERR_FILENO);
-		return ;
-	}
-	if (node->tab_exec[1])
-	{
-		ft_putstr_fd("env: ", STDERR_FILENO);
-		ft_putstr_fd(node->tab_exec[1], STDERR_FILENO);
-		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
-		return ;
-	}
 	(void)node;
 	current = env->first;
-	while (current)
+	while (current != NULL)
 	{
-		ft_putstr_fd(current->key, STDOUT_FILENO);
+		ft_putstr_fd(current->name, STDOUT_FILENO);
 		ft_putchar_fd('=', STDOUT_FILENO);
-		ft_putstr_fd(current->value, STDOUT_FILENO);
+		ft_putstr_fd(current->content, STDOUT_FILENO);
 		ft_putchar_fd('\n', STDOUT_FILENO);
 		current = current->next;
 	}
+	printf("\nENV->LAST : %s\n", env->last->name);
+	printf("\nENV->LAST->PREV : %s\n", env->last->prev->name);
 }

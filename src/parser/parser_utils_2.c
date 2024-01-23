@@ -3,28 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils_2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edesaint <edesaint@student.42.fr>          +#+  +:+       +#+        */
+/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 08:56:42 by blax              #+#    #+#             */
-/*   Updated: 2024/01/20 15:17:22 by edesaint         ###   ########.fr       */
+/*   Updated: 2024/01/23 14:01:26 by letnitan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void init_data(t_data *data, char *str)
-{
-    data->start = 0;
-    data->end = 0;
-    data->node = NULL;
-    data->nb_tokens = 0;
-    data->nb_nodes = 0;
-    data->token = NULL;
-    data->is_space = false;
-    data->type_quote = '\0';
-    data->in_quote = 0;
-    data->str = trim_str(str);
-}
 
 bool in_node(t_data *data, t_token *token)
 {

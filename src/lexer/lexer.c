@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edesaint <edesaint@student.42.fr>          +#+  +:+       +#+        */
+/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:08:04 by blax              #+#    #+#             */
-/*   Updated: 2024/01/22 21:54:10 by edesaint         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:51:47 by letnitan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,14 @@ bool process_quote(t_data *data, int *i)
     return (true);
 }
 
-// voir peut etre si il y a besoin de connaitre le nombre de double quotes d'affiler, alors 
+// voir peut etre si il y a besoin de connaitre le nombre de double quotes d'affiler, alors
 // rajouter un attribut a la structure data et incrementer dans ft_lexer
 /* Analyse la chaîne de caractères 'str' et remplit 'data' avec les tokens. */
 bool ft_lexer(t_data *data)
 {
     int i;
     int len_str;
-    
+
     i = 0;
     while (data->str[i])
     {

@@ -3,20 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edesaint <edesaint@student.42.fr>          +#+  +:+       +#+        */
+/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/23 11:53:55 by edesaint          #+#    #+#             */
-/*   Updated: 2024/01/23 11:59:11 by edesaint         ###   ########.fr       */
+/*   Created: 2023/10/30 18:23:51 by blax              #+#    #+#             */
+/*   Updated: 2024/01/23 18:46:26 by letnitan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int                g_info;
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int				g_info;
 
 // il faut afficher un message de sortie: "exit" quand on clique sur ctrl+D
 void handle_signal(int signo)
 {
+    // Vous pouvez personnaliser la gestion des signaux ici si nécessaire
     if (signo == SIGINT)
     {
         rl_on_new_line();
@@ -26,7 +34,7 @@ void handle_signal(int signo)
     }
 }
 
-int ft_main(t_data *data, char *str)
+int ft_main(t_data *data, char *str, t_env *env)
 {
     init_data(data, str);
     if (!is_closed_quotes(data))
@@ -42,12 +50,14 @@ int ft_main(t_data *data, char *str)
     parser(data);
     print_tokens(data->token);
     print_nodes(data);
+	execute_command_node(data->node, env);
     return (0);
 }
 
-int main(int argc, char *argv[])
+int	main(int argc, char *argv[], char **env)
 {
     t_data data;
+    t_env *my_env;
     char *command;
 
     if (argc > 1)
@@ -57,6 +67,10 @@ int main(int argc, char *argv[])
     }
     argv[0] = '\0';
     signal(SIGINT, handle_signal);
+    if (!env || !env[0])
+        my_env = init_mini_env();
+    else
+        my_env = init_env(env);
     while (1)
     {
         command = readline("minishell> ");
@@ -68,12 +82,13 @@ int main(int argc, char *argv[])
         if (command && *command)
         {
             add_history(command);
-            ft_main(&data, command);
+            ft_main(&data, command, my_env);
             printf("\n");
         }
         free(command);
     }
     rl_clear_history();
-    free_all(&data);
+	free_all(&data);
     return (0);
 }
+

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/13 21:08:10 by wnguyen           #+#    #+#             */
-/*   Updated: 2023/11/15 21:13:53 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/23 14:54:22 by letnitan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,4 +20,15 @@ void	*ft_memset(void *s, int c, size_t n)
 	while (n-- > 0)
 		*ptr++ = c;
 	return (s);
+}
+
+void	*memset_malloc(int c, size_t len)
+{
+	void	*point;
+
+	point = malloc(len);
+	if (!point)
+		return (NULL);
+	point = ft_memset(point, c, len);
+	return (point);
 }

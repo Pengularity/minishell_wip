@@ -6,7 +6,7 @@
 /*   By: edesaint <edesaint@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/16 18:26:34 by blax              #+#    #+#             */
-/*   Updated: 2024/01/23 11:12:16 by edesaint         ###   ########.fr       */
+/*   Updated: 2024/01/22 22:03:41 by edesaint         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,9 @@ int main(int argc, char *argv[])
     parser(&data);
     print_tokens(data.token);
     print_nodes(&data);
+    // build_ast(tree, data);
+    // print_ast(tree);
+    // free_data(&data);
     free_all(&data);
     return (0);
 }

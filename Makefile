@@ -1,6 +1,9 @@
+# clear && make fclean && make tests && ./run_tests
 
 SRC_DIR = src/
+TEST_DIR = tests/
 OBJ_DIR = obj/
+OBJ_TEST_DIR = obj_tests/
 
 SRC_FILES = main.c \
 			transform_enum.c \
@@ -31,18 +34,30 @@ SRC_FILES = main.c \
 			error.c \
 			free/free.c \
 			free/free_2.c \
-			# off_main.c \
-			# builtins/ft_echo.c \
-			# builtins/ft_env.c \
-			# builtins/ft_exit.c \
-			# builtins/ft_pwd.c \
-			# builtins/ft_unset.c \
-			# builtins/ft_export.c \
-			# exec/exec.c \
+			builtins/ft_echo.c \
+			builtins/ft_env.c \
+			builtins/ft_exit.c \
+			builtins/ft_pwd.c \
+			builtins/ft_unset.c \
+			builtins/ft_export.c \
+			exec/exec.c \
+			init/init_data.c \
+			init/init_env.c \
+			env/env_utils.c \
+			# builtins/ft_cd.c \
 			# exec/file_redir.c \
 
+# TEST_FILES = common/ts_common.c \
+# 			lexer/ts_1.c \
+# 			lexer/ts_2.c \
+# 			lexer/ts_3.c \
+# 			lexer/ts_4.c \
+# 			lexer/ts_5.c
+
 SRC = $(addprefix $(SRC_DIR), $(SRC_FILES))
+TEST = $(addprefix $(TEST_DIR), $(TEST_FILES))
 OBJ = $(addprefix $(OBJ_DIR), $(SRC_FILES:.c=.o))
+OBJ_TEST = $(addprefix $(OBJ_TEST_DIR), $(TEST_FILES:.c=.o))
 
 # DEPS = $(OBJ:.o=.d)
 
@@ -50,6 +65,11 @@ OBJ = $(addprefix $(OBJ_DIR), $(SRC_FILES:.c=.o))
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJ_TEST_DIR)%.o: $(TEST_DIR)%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
 
 # /* ~~~~~~~ INCLUDING LIBFT ~~~~~~~ */
 LIBFT_DIR = libft
@@ -60,6 +80,7 @@ LIBFT_PATH = ${LIBFT_DIR}/libft.a
 CC = gcc # CC = clang
 CFLAGS = -Wall -Wextra -Werror -g # -MMD -MP
 LIBFT_FLAGS = -L $(LIBFT_DIR) -lft
+CRITERION_FLAGS = -lcriterion
 INCLUDES = -I ./include
 
 # /* ~~~~~~~ OTHER ~~~~~~~ */
@@ -84,15 +105,23 @@ $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT_FLAGS) -lreadline
 	@echo $(GREEN) "[OK COMPILED]" $(EOC)
 
+# tests: $(OBJ) $(OBJ_TEST)
+# 	@echo $(CYAN) " - Compiling $@" $(RED)
+# 	@cd $(LIBFT_DIR) && $(MAKE)
+# 	$(CC) $(CFLAGS) $(INCLUDES) -o $(TEST_NAME) $(OBJ) $(OBJ_TEST) $(LIBFT_PATH) $(CRITERION_FLAGS)
+# 	@echo $(GREEN) "[OK COMPILED]" $(EOC)
+
 clean:
 	@echo $(PURPLE) "[🧹Cleaning...🧹]" $(EOC)
 	@${RM} -r $(OBJ_DIR)
+	@${RM} -r $(OBJ_TEST_DIR)
 	# @${RM} $(DEPS)
 	@make -C ${LIBFT_DIR} -f ${LIBFT_MAKE} fclean
-	
+
 fclean: clean
 	@echo $(PURPLE) "[🧹FCleaning...🧹]" $(EOC)
 	@${RM} $(NAME)
+	@${RM} $(TEST_NAME)
 
 re: fclean all
 

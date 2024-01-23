@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:22:06 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 13:26:32 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/22 14:26:48 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,12 @@ void	ft_exit(t_node *node, t_env *env)
 		exit(exit_status);
 	if (!is_valid_exit_num(args[1]))
 		exit_with_error(args[1]);
-	if (args[1])
-		exit_status = ft_atoi(args[1]);
-	else
-		exit_status = 0;
+	exit_status = ft_atoi(args[1]);
 	if (args[2])
 	{
 		ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
 		return ;
 	}
-	exit(exit_status % 256);
+	ft_putendl_fd("exit", STDOUT_FILENO);
+	exit(exit_status);
 }

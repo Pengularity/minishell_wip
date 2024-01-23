@@ -3,24 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 13:49:07 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 14:27:12 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/23 13:40:55 by letnitan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	add_env_var(t_env *env, const char *key, const char *value)
+void	add_env_var(t_env *env, const char *name, const char *content)
 {
-	t_env_element	*new_var;
+	t_env_link	*new_var;
 
-	new_var = malloc(sizeof(t_env_element));
+	new_var = malloc(sizeof(t_env_link));
 	if (!new_var)
 		return (perror("malloc error"));
-	new_var->key = ft_strdup(key);
-	new_var->value = ft_strdup(value);
+	new_var->name = ft_strdup(name);
+	new_var->content = ft_strdup(content);
 	new_var->next = NULL;
 	new_var->prev = env->last;
 	if (env->last)
@@ -31,59 +31,34 @@ void	add_env_var(t_env *env, const char *key, const char *value)
 	env->len++;
 }
 
-void	update_env_var(t_env *env, const char *key, const char *value)
+void	update_env_var(t_env *env, const char *name, const char *content)
 {
-	t_env_element	*current;
+	t_env_link	*current;
 
 	current = env->first;
 	while (current)
 	{
-		if (strcmp(current->key, key) == 0)
+		if (strcmp(current->name, name) == 0)
 		{
-			free(current->value);
-			current->value = ft_strdup(value);
+			free(current->content);
+			current->content = ft_strdup(content);
 			return ;
 		}
 		current = current->next;
 	}
-	add_env_var(env, key, value);
+	add_env_var(env, name, content);
 }
 
-char	*get_env_key(t_env *env, const char *key)
+char	*get_env_name(t_env *env, const char *name)
 {
-	t_env_element	*current;
+	t_env_link	*current;
 
 	current = env->first;
 	while (current)
 	{
-		if (strcmp(current->key, key) == 0)
-			return (current->value);
+		if (strcmp(current->name, name) == 0)
+			return (current->content);
 		current = current->next;
 	}
 	return (NULL);
-}
-
-char	*get_env_value(t_env *env, const char *value)
-{
-	int		i;
-	char	*key;
-
-	i = 0;
-	while (value[i] && value[i] != '=')
-		i++;
-	key = ft_substr(value, i + 1, ft_strlen(value) - i);
-	return (key);
-}
-
-char	*get_env_path(t_env *env)
-{
-	t_env_element	*current;
-
-	current = env->first;
-	while (current)
-	{
-		if (strcmp(current->key, "PATH") == 0)
-			return (current->value);
-		current = current->next;
-	}
 }

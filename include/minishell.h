@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edesaint <edesaint@student.42.fr>          +#+  +:+       +#+        */
+/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 08:31:10 by blax              #+#    #+#             */
-/*   Updated: 2024/01/22 22:32:44 by edesaint         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:19:05 by letnitan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,20 @@ void	ft_env(t_node *node, t_env *env);
 void	ft_pwd(t_node *node, t_env *env);
 void	ft_unset(t_node *node, t_env *env);
 void	ft_exit(t_node *node, t_env *env);
-void	ft_export(char **args, t_list **env);
+void	ft_export(t_node *node, t_env *env);
+
+//ft_unset.c util
+int	is_valid_env_name(const char *str);
+
+//env_utils.c
+void	add_env_var(t_env *env, const char *name, const char *content);
+void	update_env_var(t_env *env, const char *name, const char *content);
+char	*get_env_name(t_env *env, const char *name);
+
+//ft_unset.c
+int		is_valid_env_name(const char *str);
+void	unset_error(char *arg);
+void	ft_unset(t_node *node, t_env *env);
 
 // syntax_utils_1.c
 bool is_quote(char c);
@@ -78,6 +91,8 @@ bool verif_syntax(t_token *token);
 int nb_trim_left(char *str);
 int nb_trim_right(char *str);
 char *trim_str(char *str);
+
+
 // ----------------------------------------------------------------------
 
 // free.c
@@ -92,6 +107,17 @@ void free_all(t_data *data);
 // error.c
 bool ft_error(char *str);
 void ft_error_2(char *str);
+
+// ------------------ Init --------------------
+
+// init_env.c
+t_env_link	*env_new_link(char *str);
+void		env_connect_links(t_env_link *prev, t_env_link *current);
+t_env	*init_mini_env();
+t_env	*init_env(char **system_env);
+
+//init_data.c
+void	init_data(t_data *data, char *str);
 
 // ------------------ Lexer --------------------
 // lexer.c
@@ -135,7 +161,6 @@ bool is_file_redirection(t_state cur_state);
 bool is_type_redir(t_state type_token);
 
 // parser_utils_2.c
-void	init_data(t_data *data, char *str);
 bool in_node(t_data *data, t_token *token);
 int compt_args(t_data *data);
 int compt_nodes(t_data *data);
@@ -183,6 +208,7 @@ void remove_quotes(char *input, char type_quote);
 void update_token_type(t_token *token, bool *is_cmd, t_state cur_state);
 void	determine_token_types(t_data *data);
 void determine_next_token_type(t_state type_token, t_state *cur_state);
+
 // ------------------ Expander --------------------
 
 // expander.c
@@ -200,5 +226,11 @@ char* process_text_until_next_dollar(const char **ptr, char *result);
 char* append_variable_value(char *result, const char *varName);
 char* extract_var_name(const char **ptr);
 char* copy_until_char(char *dest, const char *src, char delimiter);
+
+
+// ------------------ EXEC --------------------
+//exec.c
+void	execute_command_node(t_node *node, t_env *env);
+void	verify_and_exec_builtin(t_node *node, t_env *env, int pid);
 
 #endif
