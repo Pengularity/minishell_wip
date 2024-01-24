@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:00:04 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 21:46:11 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:48:00 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,17 @@ int	check_env_name(const char *str)
 }
 
 
-void	ft_export(t_node *node, t_env *env)
+int	ft_export(t_node *node, t_env *env)
 {
 	int			i;
-	// char		*name;
-	// char		*content;
 	t_env_link	*new_link;
 
 	i = 1;
 	if (!node->tab_exec[1] || node->tab_exec[1][0] == '#')
+	{
 		print_env_var(env);
+		return (0);
+	}	
 	while (node->tab_exec[i] && node->tab_exec[i][0] != '#')
 	{
 		if (check_env_name(node->tab_exec[i]))
@@ -85,12 +86,11 @@ void	ft_export(t_node *node, t_env *env)
 			if (env->first == NULL)
 				env->first = new_link;
 			env->len++;
-			// printf("\nENV->LAST : %s\n", env->last->name);
-			// printf("\nENV->LAST->PREV : %s\n", env->last->prev->name);
 		}
 		else
 			export_error(node->tab_exec[i]);
 		i++;
 	}
+	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 08:31:10 by blax              #+#    #+#             */
-/*   Updated: 2024/01/23 21:10:28 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:52:19 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,21 @@ extern int g_info;
 
 // transform_enum.c
 t_stick_token ft_type_char(char c);
-char *transform_enum_type_token(t_state num_c);
-char *transform_enum_quote(t_stick_token num_c);
-char *transform_enum_type_node(t_type_node num_c);
+char	*transform_enum_type_token(t_state num_c);
+char	*transform_enum_quote(t_stick_token num_c);
+char	*transform_enum_type_node(t_type_node num_c);
 
 //builtins.c
-void	ft_cd(t_node *node, t_env *env);
-void	ft_echo(t_node *node, t_env *env);
-void	ft_env(t_node *node, t_env *env);
-void	ft_pwd(t_node *node, t_env *env);
-void	ft_unset(t_node *node, t_env *env);
-void	ft_exit(t_node *node, t_env *env);
-void	ft_export(t_node *node, t_env *env);
+int		ft_cd(t_node *node, t_env *env);
+int		ft_echo(t_node *node, t_env *env);
+int		ft_env(t_node *node, t_env *env);
+int		ft_pwd(t_node *node, t_env *env);
+int		ft_unset(t_node *node, t_env *env);
+int		ft_exit(t_node *node, t_env *env);
+int		ft_export(t_node *node, t_env *env);
 
 //ft_unset.c util
-int	is_valid_env_name(const char *str);
+int		is_valid_env_name(const char *str);
 
 //env_utils.c
 void	add_env_var(t_env *env, const char *name, const char *content);
@@ -58,7 +58,6 @@ char	*get_env_name(t_env *env, const char *name);
 //ft_unset.c
 int		is_valid_env_name(const char *str);
 void	unset_error(char *arg);
-void	ft_unset(t_node *node, t_env *env);
 
 // syntax_utils_1.c
 bool is_quote(char c);
@@ -231,7 +230,9 @@ char* copy_until_char(char *dest, const char *src, char delimiter);
 // ------------------ EXEC --------------------
 //exec.c
 void	execute_command_node(t_node *node, t_env *env);
-void	verify_and_exec_builtin(t_node *node, t_env *env, int pid);
+int		verify_and_exec_builtin(t_node *node, t_env *env, int pid);
+char	*get_cmd_path(char *cmd, char **envp);
+int		exec_builtin(t_node *node, t_env *env);
 
 // signals.c
 

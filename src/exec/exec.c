@@ -6,36 +6,36 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 10:04:08 by blax              #+#    #+#             */
-/*   Updated: 2024/01/23 21:28:35 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:53:07 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	verify_and_exec_builtin(t_node *node, t_env *env, int pid)
-{
-	if (!node || !node->tab_exec || !node->tab_exec[0] || node->type != N_CMD)
-		return (ft_putstr_fd("Invalid command\n", STDERR_FILENO),
-			exit(EXIT_FAILURE));
-	if (ft_strcmp(node->tab_exec[0], "echo") == 0)
-		ft_echo(node, env);
-	// else if (ft_strcmp(node->tab_exec[0], "cd") == 0)
-	// 	ft_cd(node, v);
-	else if (ft_strcmp(node->tab_exec[0], "pwd") == 0)
-		ft_pwd(node, env);
-	else if (ft_strcmp(node->tab_exec[0], "export") == 0)
-		ft_export(node, env);
-	else if (ft_strcmp(node->tab_exec[0], "unset") == 0)
-		ft_unset(node, env);
-	else if (ft_strcmp(node->tab_exec[0], "env") == 0)
-		ft_env(node, env);
-	else if (ft_strcmp(node->tab_exec[0], "exit") == 0)
-		ft_exit(node, env);
-	else
-		return ;
-	if (pid == 0)
-		exit(EXIT_SUCCESS);
-}
+// void	verify_and_exec_builtin(t_node *node, t_env *env, int pid)
+// {
+// 	if (!node || !node->tab_exec || !node->tab_exec[0] || node->type != N_CMD)
+// 		return (ft_putstr_fd("Invalid command\n", STDERR_FILENO),
+// 			exit(EXIT_FAILURE));
+// 	if (ft_strcmp(node->tab_exec[0], "echo") == 0)
+// 		ft_echo(node, env);
+// 	// else if (ft_strcmp(node->tab_exec[0], "cd") == 0)
+// 	// 	ft_cd(node, v);
+// 	else if (ft_strcmp(node->tab_exec[0], "pwd") == 0)
+// 		ft_pwd(node, env);
+// 	else if (ft_strcmp(node->tab_exec[0], "export") == 0)
+// 		ft_export(node, env);
+// 	else if (ft_strcmp(node->tab_exec[0], "unset") == 0)
+// 		ft_unset(node, env);
+// 	else if (ft_strcmp(node->tab_exec[0], "env") == 0)
+// 		ft_env(node, env);
+// 	else if (ft_strcmp(node->tab_exec[0], "exit") == 0)
+// 		ft_exit(node, env);
+// 	else
+// 		return ;
+// 	if (pid == 0)
+// 		exit(EXIT_SUCCESS);
+// }
 
 // void	setup_redirections(int *fd_in, int *fd_out)
 // {
@@ -102,32 +102,32 @@ void	execute_command(t_node *node, int *fd_in, int *fd_out)
 void	execute_command_node(t_node *node, t_env *env)
 {
 	if (node->id == 0 && node->next == NULL)
-		verify_and_exec_builtin(node, env, 1);
-	else
-	{
-		int	fd_in[2];
-		int	fd_out[2];
+		exec_builtin(node, env);
+	// else
+	// {
+	// 	int	fd_in[2];
+	// 	int	fd_out[2];
 
-		fd_in[0] = STDIN_FILENO;
-		fd_in[1] = STDOUT_FILENO;
-		fd_out[0] = STDIN_FILENO;
-		fd_out[1] = STDOUT_FILENO;
-		while (node != NULL)
-		{
-			if (node->next != NULL)
-				pipe(fd_out);
-			verify_and_exec_builtin(node, env, 0);
-			execute_command(node, fd_in, fd_out);
-			if (node->next != NULL)
-			{
-				close(fd_out[1]);
-				if (fd_in[0] != STDIN_FILENO)
-					close(fd_in[0]);
-				fd_in[0] = fd_out[0];
-			}
-			node = node->next;
-		}
-	}
+	// 	fd_in[0] = STDIN_FILENO;
+	// 	fd_in[1] = STDOUT_FILENO;
+	// 	fd_out[0] = STDIN_FILENO;
+	// 	fd_out[1] = STDOUT_FILENO;
+	// 	while (node != NULL)
+	// 	{
+	// 		if (node->next != NULL)
+	// 			pipe(fd_out);
+	// 		verify_and_exec_builtin(node, env, 0);
+	// 		execute_command(node, fd_in, fd_out);
+	// 		if (node->next != NULL)
+	// 		{
+	// 			close(fd_out[1]);
+	// 			if (fd_in[0] != STDIN_FILENO)
+	// 				close(fd_in[0]);
+	// 			fd_in[0] = fd_out[0];
+	// 		}
+	// 		node = node->next;
+	// 	}
+	// }
 
 	// int	fd_out[2];
 

@@ -6,17 +6,18 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 07:33:34 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 20:23:14 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:31:27 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	ft_env(t_node *node, t_env *env)
+int	ft_env(t_node *node, t_env *env)
 {
 	t_env_link	*current;
 
-	(void)node;
+	if (node->tab_exec[1])
+		return (125);
 	current = env->first;
 	while (current != NULL)
 	{
@@ -26,4 +27,5 @@ void	ft_env(t_node *node, t_env *env)
 		ft_putchar_fd('\n', STDOUT_FILENO);
 		current = current->next;
 	}
+	return (0);
 }

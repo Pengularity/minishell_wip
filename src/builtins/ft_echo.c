@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 21:31:23 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/21 17:33:22 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:47:32 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ bool	is_n_option(char *str)
  * Supports the '-n' option to suppress the trailing newline.
  */
 
-void	ft_echo(t_node *node, t_env *env)
+int	ft_echo(t_node *node, t_env *env)
 {
 	int	i;
 	int	n_option;
@@ -48,7 +48,7 @@ void	ft_echo(t_node *node, t_env *env)
 	i = 1;
 	n_option = 0;
 	if (!node->tab_exec[1])
-		return (ft_putchar_fd('\n', STDOUT_FILENO));
+		return (ft_putchar_fd('\n', STDOUT_FILENO), 0);
 	while (node->tab_exec[i] && is_n_option(node->tab_exec[i]))
 	{
 		n_option = 1;
@@ -63,28 +63,5 @@ void	ft_echo(t_node *node, t_env *env)
 	}
 	if (!n_option)
 		ft_putchar_fd('\n', STDOUT_FILENO);
+	return (0);
 }
-
-// int main() {
-//     // Test 1: L'option -n valide
-//     char *test1[] = {"echo", "-n", "-n", "Hello, World!", NULL};
-//     ft_echo(test1);
-
-//     // Test 2: L'option -n suivie de caractères non 'n'
-//     char *test2[] = {"echo", "-nx", "Hello, World!", NULL};
-//     ft_echo(test2);
-
-//     // Test 3: Aucune option -n
-//     char *test3[] = {"echo", "Hello, World!", NULL};
-//     ft_echo(test3);
-
-//     // Test 4: Mélange de -n valide et d'autres arguments
-//     char *test4[] = {"echo", "-n", "-nnn", "-nx", "message", NULL};
-//     ft_echo(test4);
-
-//     // Test 5: L'option -n avec des espaces avant le message
-//     char *test5[] = {"echo", "-n", "     ", "Hello, World!", NULL};
-//     ft_echo(test5);
-
-//     return 0;
-// }

@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 20:21:48 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 20:22:41 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:45:19 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	unset_error(char *arg)
 	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 }
 
-void	ft_unset(t_node *node, t_env *env)
+int	ft_unset(t_node *node, t_env *env)
 {
 	t_env_link	*current;
 	t_env_link	*next;
@@ -76,7 +76,6 @@ void	ft_unset(t_node *node, t_env *env)
 		{
 			unset_error(args[i]);
 			i++;
-			continue ;
 		}
 		current = env->first;
 		while (current)
@@ -88,4 +87,5 @@ void	ft_unset(t_node *node, t_env *env)
 		}
 		i++;
 	}
+	return (0);
 }

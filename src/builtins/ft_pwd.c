@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 06:47:01 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/21 14:51:34 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 14:41:59 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 * En cas d'erreur, affiche un message d'erreur.
 */
 
-void	ft_pwd(t_node *node, t_env *env)
+int	ft_pwd(t_node *node, t_env *env)
 {
 	char	*cwd;
 
@@ -30,6 +30,10 @@ void	ft_pwd(t_node *node, t_env *env)
 		free(cwd);
 	}
 	else
+	{
 		perror("ft_pwd: getcwd error");
+		return (1);
+	}	
 	ft_putchar_fd('\n', STDOUT_FILENO);
+	return (0);
 }

@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   init_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 14:01:14 by letnitan          #+#    #+#             */
-/*   Updated: 2024/01/23 16:38:59 by letnitan         ###   ########.fr       */
+/*   Updated: 2024/01/24 11:49:47 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 // Creates a new t_env_link node by dividing a str from the env at the '=' sign and filles the *name and *content
-t_env_link *env_new_link(char *str)
+t_env_link	*env_new_link(char *str)
 {
 	char		*tmp;
 	t_env_link	*new_link;
@@ -44,12 +44,12 @@ void	env_connect_links(t_env_link *prev, t_env_link *current)
 }
 
 // If env is unset, we create a basic env structure : _/, SHLVL, PWD + cur_path, PATH + execve paths
-t_env *init_mini_env()
+t_env	*init_mini_env(void)
 {
-	t_env	*mini_env;
+	t_env		*mini_env;
 	t_env_link	*temp;
-	char	*pwd;
-	char	*path;
+	char		*pwd;
+	char		*path;
 
 	mini_env = malloc(sizeof(t_env));
 	pwd = getcwd(NULL, 0);
@@ -59,7 +59,7 @@ t_env *init_mini_env()
 	env_connect_links(mini_env->first, env_new_link("SHLVL=1"));
 	path = ft_strjoin("PWD=", pwd);
 	mini_env->last = env_new_link(path);
-	env_connect_links(mini_env->first->next,mini_env->last);
+	env_connect_links(mini_env->first->next, mini_env->last);
 	free(path);
 	path = ft_strjoin("PATH=",
 			"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
