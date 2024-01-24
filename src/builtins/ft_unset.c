@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 20:21:48 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/24 14:45:19 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 18:14:43 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,10 @@ int	ft_unset(t_node *node, t_env *env)
 		{
 			next = current->next;
 			if (strcmp(current->name, args[i]) == 0)
+			{
 				remove_env_link(env, current);
+				env->len--;
+			}
 			current = next;
 		}
 		i++;
