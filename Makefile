@@ -42,6 +42,8 @@ SRC_FILES = main.c \
 			builtins/ft_export.c \
 			exec/exec.c \
 			exec/exec_builtin.c \
+			exec/exec_cmd.c \
+			exec/get_path.c \
 			init/init_data.c \
 			init/init_env.c \
 			env/env_utils.c \

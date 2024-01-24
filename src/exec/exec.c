@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 10:04:08 by blax              #+#    #+#             */
-/*   Updated: 2024/01/24 14:53:07 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 16:53:27 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,43 +67,73 @@ void	launch_command(t_node *node)
 	}
 }
 
-void	execute_command(t_node *node, int *fd_in, int *fd_out)
-{
-	pid_t	pid;
+// void	execute_command(t_node *node, int *fd_in, int *fd_out)
+// {
+// 	pid_t	pid;
 
-	if (node->next != NULL)
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		exit(EXIT_FAILURE);
-	}
-	if (pid == 0)
-	{
-		// setup_redirections(fd_in, fd_out);
-		if (strcmp(node->tab_exec[0], "exit") == 0)
-			exit(atoi(node->tab_exec[1]));
-		verify_and_exec_builtin(node, NULL, 1);
-		launch_command(node);
-	}
-	else
-	{
-		if (fd_in[0] != STDIN_FILENO)
-			close(fd_in[0]);
-		if (node->next != NULL)
-		{
-			close(fd_out[1]);
-			fd_in[0] = fd_out[0];
-		}
-		waitpid(pid, NULL, 0);
-	}
-}
+// 	if (node->next != NULL)
+// 	pid = fork();
+// 	if (pid == -1)
+// 	{
+// 		perror("fork");
+// 		exit(EXIT_FAILURE);
+// 	}
+// 	if (pid == 0)
+// 	{
+// 		// setup_redirections(fd_in, fd_out);
+// 		if (strcmp(node->tab_exec[0], "exit") == 0)
+// 			exit(atoi(node->tab_exec[1]));
+// 		verify_and_exec_builtin(node, NULL, 1);
+// 		launch_command(node);
+// 	}
+// 	else
+// 	{
+// 		if (fd_in[0] != STDIN_FILENO)
+// 			close(fd_in[0]);
+// 		if (node->next != NULL)
+// 		{
+// 			close(fd_out[1]);
+// 			fd_in[0] = fd_out[0];
+// 		}
+// 		waitpid(pid, NULL, 0);
+// 	}
+// }
 
 void	execute_command_node(t_node *node, t_env *env)
 {
-	if (node->id == 0 && node->next == NULL)
+	pid_t	pid;
+	int		status;
+	char	**envp;
+
+	if (!node || !node->tab_exec || !node->tab_exec[0] || node->type != N_CMD)
+		return (ft_putstr_fd("Invalid command\n", STDERR_FILENO),
+			exit(EXIT_FAILURE));
+	if (node->id == 0 && node->next == NULL && is_builtin(node))
 		exec_builtin(node, env);
-	// else
+	else
+	{
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+		if (pid == 0)
+		{
+			exec_builtin(node, env);
+			envp = convert_env_to_tab(env);
+			execute_command(node, envp);
+			free(envp);
+			exit(EXIT_SUCCESS);
+		}
+		else
+		{
+			waitpid(pid, &status, 0);
+			if (WIFEXITED(status))
+				g_info = WEXITSTATUS(status);
+		}
+	}
+
 	// {
 	// 	int	fd_in[2];
 	// 	int	fd_out[2];

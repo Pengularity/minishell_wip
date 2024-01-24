@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 13:49:07 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/23 13:40:55 by letnitan         ###   ########.fr       */
+/*   Updated: 2024/01/24 16:33:56 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,42 @@ char	*get_env_name(t_env *env, const char *name)
 		current = current->next;
 	}
 	return (NULL);
+}
+
+char	*join_var_in_str(t_env_link *env_link)
+{
+	char	*res;
+	char	*temp;
+
+	temp = ft_strjoin(env_link->name, "=");
+	if (!temp)
+		return (NULL);
+	res = ft_strjoin(temp, env_link->content);
+	free (temp);
+	if (!res)
+		return (NULL);
+	return (res);
+}
+
+char	**convert_env_to_tab(t_env *env)
+{
+	unsigned int	i;
+	char			**res;
+	t_env_link		*env_link;
+
+	i = 0;
+	res = (char **)malloc(sizeof(char *) * (env->len + 1));
+	if (!res)
+		return (NULL);
+	env_link = env->first;
+	while (i < env->len)
+	{
+		res[i] = join_var_in_str(env_link);
+		if (!res[i])
+			return (res); // a free
+		env_link = env_link->next;
+		i++;
+	}
+	res[i] = 0;
+	return (res);
 }

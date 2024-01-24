@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 12:26:37 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/24 12:27:54 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 16:35:35 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,20 @@
 static char	*search_in_path(char *cmd, char **paths)
 {
 	char	*full_path;
-	int		j;
+	int		i;
 
 	full_path = NULL;
-	j = 0;
-	while (paths[j])
+	i = 0;
+	while (paths[i])
 	{
-		full_path = ft_strjoin(ft_strjoin(paths[j], "/"), cmd);
-		if (access(full_path, F_OK) != -1)
+		full_path = ft_strjoin(ft_strjoin(paths[i], "/"), cmd);
+		if (!full_path)
+			return (NULL);
+		if (access(full_path, F_OK | X_OK) != -1)
 			break ;
 		free(full_path);
 		full_path = NULL;
-		j++;
+		i++;
 	}
 	return (full_path);
 }

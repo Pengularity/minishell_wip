@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 08:31:10 by blax              #+#    #+#             */
-/*   Updated: 2024/01/24 14:52:19 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/24 16:50:45 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ int		is_valid_env_name(const char *str);
 void	add_env_var(t_env *env, const char *name, const char *content);
 void	update_env_var(t_env *env, const char *name, const char *content);
 char	*get_env_name(t_env *env, const char *name);
+char	*join_var_in_str(t_env_link *env_link);
+char	**convert_env_to_tab(t_env *env);
 
 //ft_unset.c
 int		is_valid_env_name(const char *str);
@@ -230,9 +232,11 @@ char* copy_until_char(char *dest, const char *src, char delimiter);
 // ------------------ EXEC --------------------
 //exec.c
 void	execute_command_node(t_node *node, t_env *env);
-int		verify_and_exec_builtin(t_node *node, t_env *env, int pid);
+int		builtin_command(t_node *node, t_env *env, int pid);
+bool	is_builtin(t_node *node);
 char	*get_cmd_path(char *cmd, char **envp);
 int		exec_builtin(t_node *node, t_env *env);
+int		execute_command(t_node *node, char **envp);
 
 // signals.c
 
