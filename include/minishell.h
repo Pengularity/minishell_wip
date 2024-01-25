@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 08:31:10 by blax              #+#    #+#             */
-/*   Updated: 2024/01/25 17:14:08 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/25 18:37:26 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include <stdlib.h> // malloc
 # include <readline/readline.h> // readline
 # include <readline/history.h> // addhistory
-#include <sys/wait.h> //wait
+# include <sys/wait.h> //wait
 # include <stdio.h>
 # include <stdbool.h>
 # include <errno.h>
@@ -62,26 +62,26 @@ int		is_valid_env_name(const char *str);
 void	unset_error(char *arg);
 
 // syntax_utils_1.c
-bool is_quote(char c);
-bool is_space(char c);
-bool is_syntax_char(char c);
-bool is_syntax(char c);
-bool is_double_symbol(t_data *data, int i, char c);
+bool	is_quote(char c);
+bool	is_space(char c);
+bool	is_syntax_char(char c);
+bool	is_syntax(char c);
+bool	is_double_symbol(t_data *data, int i, char c);
 
 // syntax_utils_2.c
 // int int_deb_string_of_before(t_data *data, int i);
 // bool deb_string_of_before(t_data *data, int i);
 // bool end_string_of_after(t_data *data, int i);
 // int int_deb_string_of_after(t_data *data, int i);
-void update_is_quote(t_data *data, char letter);
-bool is_closed_quotes(t_data *data);
+void	update_is_quote(t_data *data, char letter);
+bool	is_closed_quotes(t_data *data);
 
 // syntax_utils_3.c
-bool is_syntax_redir(char *str);
-bool is_begin_by_pipe(t_token *token);
-bool is_end_by_pipe(t_token *token);
-bool check_redir(t_token *token);
-bool is_valid_redir(t_token *token);
+bool	is_syntax_redir(char *str);
+bool	is_begin_by_pipe(t_token *token);
+bool	is_end_by_pipe(t_token *token);
+bool	check_redir(t_token *token);
+bool	is_valid_redir(t_token *token);
 
 // syntax.c
 bool verif_syntax(t_token *token);
@@ -237,6 +237,7 @@ bool	is_builtin(t_node *node);
 char	*get_cmd_path(char *cmd, char **envp);
 int		exec_builtin(t_node *node, t_env *env);
 int		execute_command(t_node *node, char **envp);
+void	exec_pipeline(t_node *node, char **envp);
 
 // signals.c
 
