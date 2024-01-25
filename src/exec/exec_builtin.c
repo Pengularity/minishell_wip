@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 14:13:03 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/24 16:51:53 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/25 17:14:03 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ int	builtin_command(t_node *node, t_env *env, int pid)
 			exit(EXIT_FAILURE), 1);
 	if (ft_strcmp(node->tab_exec[0], "echo") == 0)
 		return (ft_echo(node, env));
-	// else if (ft_strcmp(node->tab_exec[0], "cd") == 0)
-	// 	ft_cd(node, v);
+	else if (ft_strcmp(node->tab_exec[0], "cd") == 0)
+		return (ft_cd(node, env));
 	else if (ft_strcmp(node->tab_exec[0], "pwd") == 0)
 		return (ft_pwd(node, env));
 	else if (ft_strcmp(node->tab_exec[0], "export") == 0)

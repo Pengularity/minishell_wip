@@ -34,6 +34,7 @@ SRC_FILES = main.c \
 			error.c \
 			free/free.c \
 			free/free_2.c \
+			builtins/ft_cd.c \
 			builtins/ft_echo.c \
 			builtins/ft_env.c \
 			builtins/ft_exit.c \
@@ -48,7 +49,6 @@ SRC_FILES = main.c \
 			init/init_env.c \
 			env/env_utils.c \
 			signals/signals.c \
-			# builtins/ft_cd.c \
 			# exec/file_redir.c \
 
 # TEST_FILES = common/ts_common.c \
