@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 08:31:10 by blax              #+#    #+#             */
-/*   Updated: 2024/01/26 14:46:06 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/26 17:39:59 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,8 @@ bool	is_builtin(t_node *node);
 char	*get_cmd_path(char *cmd, char **envp);
 int		exec_builtin(t_node *node, t_env *env);
 int		execute_command(t_node *node, char **envp);
-void	exec_pipeline(t_node *node, char **envp, t_env *env);
+// void	exec_pipeline(t_node *node, char **envp, t_env *env);
+void	exec_pipeline(t_node *node, t_env *env);
 
 // signals.c
 

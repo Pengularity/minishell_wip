@@ -6,55 +6,11 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 10:04:08 by blax              #+#    #+#             */
-/*   Updated: 2024/01/26 15:40:46 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/26 17:39:48 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-
-void	launch_command(t_node *node)
-{
-	if (execvp(node->tab_exec[0], node->tab_exec) == -1)
-	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(node->tab_exec[0], STDERR_FILENO);
-		ft_putstr_fd(": command not found\n", STDERR_FILENO);
-		exit(127);
-	}
-}
-
-// void	execute_command(t_node *node, int *fd_in, int *fd_out)
-// {
-// 	pid_t	pid;
-
-// 	if (node->next != NULL)
-// 	pid = fork();
-// 	if (pid == -1)
-// 	{
-// 		perror("fork");
-// 		exit(EXIT_FAILURE);
-// 	}
-// 	if (pid == 0)
-// 	{
-// 		// setup_redirections(fd_in, fd_out);
-// 		if (strcmp(node->tab_exec[0], "exit") == 0)
-// 			exit(atoi(node->tab_exec[1]));
-// 		verify_and_exec_builtin(node, NULL, 1);
-// 		launch_command(node);
-// 	}
-// 	else
-// 	{
-// 		if (fd_in[0] != STDIN_FILENO)
-// 			close(fd_in[0]);
-// 		if (node->next != NULL)
-// 		{
-// 			close(fd_out[1]);
-// 			fd_in[0] = fd_out[0];
-// 		}
-// 		waitpid(pid, NULL, 0);
-// 	}
-// }
 
 void	execute_single_cmd(t_node *node, t_env *env)
 {
@@ -70,8 +26,6 @@ void	execute_single_cmd(t_node *node, t_env *env)
 	}
 	if (pid == 0)
 	{
-		if (exec_builtin(node, env))
-			exit(EXIT_SUCCESS);
 		envp = convert_env_to_tab(env);
 		execute_command(node, envp);
 		free(envp);
@@ -101,14 +55,12 @@ void	execute_command_node(t_node *node, t_env *env)
 	else if (node->next != NULL)
 	{
 		envp = convert_env_to_tab(env);
-		exec_pipeline(node, envp, env);
+		exec_pipeline(node, env);
 		free(envp);
 	}
-	// else
-	// 	execute_single_cmd(node, env);
+	else
+		execute_single_cmd(node, env);
 }
-
-
 
 // {
 // 	pid_t	pid;

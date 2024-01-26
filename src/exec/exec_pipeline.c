@@ -6,40 +6,50 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:04:50 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/26 15:39:37 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/26 17:42:45 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	create_pipe_and_fork(int *pipe_fds)
+int	init_pipe_fds(int *pipe_fds, t_node *node)
 {
-	int	pid;
-
-	if (pipe(pipe_fds) == -1)
-		return (perror("pipe error"), -1);
-	pid = fork();
-	if (pid == -1)
-		return (perror("fork error"), -1);
-	if (pid == 0)
+	if (node->next != NULL)
 	{
-		close(pipe_fds[0]);
-		if (dup2(pipe_fds[1], STDOUT_FILENO) == -1)
-			return (perror("dup2"), -1);
-		close(pipe_fds[1]);
+		if (pipe(pipe_fds) == -1)
+		{
+			perror("pipe error");
+			return (EXIT_FAILURE);
+		}
 	}
-	if (pid != 0)
-		close(pipe_fds[1]);
-	return (pid);
+	else
+	{
+		pipe_fds[0] = -1;
+		pipe_fds[1] = -1;
+	}
+	return (EXIT_SUCCESS);
 }
 
-void	execute_pipe_command(t_node *node, int in_fd, char **envp, t_env *env)
+void	exec_child_process(t_node *node, int in_fd, t_env *env, int *pipe_fds)
 {
+	char	**envp;
+
+	envp = convert_env_to_tab(env);
 	if (in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
-			return (perror("dup2"), exit(EXIT_FAILURE));
+		{
+			perror("dup2 error");
+			exit(EXIT_FAILURE);
+		}
 		close(in_fd);
+	}
+	if (node->next)
+	{
+		close(pipe_fds[0]);
+		if (dup2(pipe_fds[1], STDOUT_FILENO) == -1)
+			(perror("dup2 error"), exit(EXIT_FAILURE));
+		close(pipe_fds[1]);
 	}
 	if (is_builtin(node))
 		exit(exec_builtin(node, env));
@@ -47,44 +57,97 @@ void	execute_pipe_command(t_node *node, int in_fd, char **envp, t_env *env)
 	exit(EXIT_SUCCESS);
 }
 
-void	exec_pipeline_rec(t_node *node, int in_fd, char **envp, t_env *env)
+void	manage_parent_process(int *in_fd, int *pipe_fds,
+	t_node *current_node, int pid)
 {
-	int		pipe_fds[2];
-	int		pid;
-
-	if (node->next)
+	if (*in_fd != STDIN_FILENO)
+		close(*in_fd);
+	if (current_node->next != NULL)
 	{
-		pid = create_pipe_and_fork(pipe_fds);
+		close(pipe_fds[1]);
+		*in_fd = pipe_fds[0];
+	}
+	else
+		*in_fd = -1;
+	waitpid(pid, NULL, 0);
+}
+
+void	exec_pipeline(t_node *node, t_env *env)
+{
+	int	pipe_fds[2];
+	int	pid;
+	int	in_fd;
+
+	in_fd = STDIN_FILENO;
+	while (node != NULL)
+	{
+		if (init_pipe_fds(pipe_fds, node) == -1)
+			return ;
+		pid = fork();
 		if (pid == -1)
 			return ;
 		if (pid == 0)
-			execute_pipe_command(node->next, in_fd, envp, env);
-		close(pipe_fds[1]);
-		if (in_fd != STDIN_FILENO)
+			exec_child_process(node, in_fd, env, pipe_fds);
+		else
+			manage_parent_process(&in_fd, pipe_fds, node, pid);
+		if (node->next == NULL && in_fd != -1)
 			close(in_fd);
-		// waitpid(pid, NULL, 0);
-		exec_pipeline_rec(node->next, pipe_fds[0], envp, env);
-		close(pipe_fds[0]);
-		// waitpid(pid, NULL, 0);
-	}
-	else
-	{
-		pid = fork();
-		if (pid == 0)
-		{
-			if (in_fd != STDIN_FILENO)
-				dup2(in_fd, STDIN_FILENO);
-			execute_pipe_command(node, in_fd, envp, env);
-			exit(EXIT_SUCCESS);
-		}
-		if (in_fd != STDIN_FILENO)
-			close(in_fd);
-		waitpid(pid, NULL, 0);
+		node = node->next;
 	}
 }
+// void exec_pipeline(t_node *node, char **envp, t_env *env) {
+//     int pipe_fds[2];
+//     int pid;
+//     int in_fd = STDIN_FILENO;
+//     t_node *current_node = node;
 
-void	exec_pipeline(t_node *node, char **envp, t_env *env)
-{
-	exec_pipeline_rec(node, STDIN_FILENO, envp, env);
-}
+//     while (current_node) {
+//         if (current_node->next) {
+//             if (pipe(pipe_fds) == -1) {
+//                 perror("pipe error");
+//                 exit(EXIT_FAILURE);
+//             }
+//         }
 
+//         pid = fork();
+//         if (pid == -1) {
+//             perror("fork error");
+//             exit(EXIT_FAILURE);
+//         }
+
+//         if (pid == 0) { // Processus enfant
+//             if (in_fd != STDIN_FILENO) {
+//                 if (dup2(in_fd, STDIN_FILENO) == -1) {
+//                     perror("dup2 error");
+//                     exit(EXIT_FAILURE);
+//                 }
+//                 close(in_fd);
+//             }
+//             if (current_node->next != NULL) {
+//                 close(pipe_fds[0]);
+//                 if (dup2(pipe_fds[1], STDOUT_FILENO) == -1) {
+//                     perror("dup2 error");
+//                     exit(EXIT_FAILURE);
+//                 }
+//                 close(pipe_fds[1]);
+//             }
+//             if (is_builtin(current_node))
+//                 exit(exec_builtin(current_node, env));
+//             execute_command(current_node, envp);
+//             exit(EXIT_SUCCESS);
+//         } else { // Processus parent
+//             if (in_fd != STDIN_FILENO)
+//                 close(in_fd);
+//             if (current_node->next != NULL) {
+//                 close(pipe_fds[1]);
+//                 in_fd = pipe_fds[0];
+//                 in_fd = -1; // Aucun pipe supplémentaire pour le dernier nœud
+//             }
+//             waitpid(pid, NULL, 0);
+//         }
+//         current_node = current_node->next;
+//     }
+
+//     if (in_fd != STDIN_FILENO) {
+//         close(in_fd);
+// }

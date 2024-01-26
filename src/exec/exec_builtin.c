@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 14:13:03 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/25 19:25:24 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/26 17:03:39 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,19 +52,16 @@ int	builtin_command(t_node *node, t_env *env, int pid)
 		exit(EXIT_SUCCESS);
 }
 
-
 int	exec_builtin(t_node *node, t_env *env)
 {
-	// int	exit_status;
+	int	exit_status;
 	int	cpy_stdout;
 
-	// exit_status = 0;
+	exit_status = 0;
 	if (node->redir_out || node->redir_append)
 		cpy_stdout = dup(STDOUT_FILENO);
-	if (builtin_command(node, env, 0) == 1)
-		return (1);
-	// exit_status = builtin_command(node, env, 1);
+	exit_status = builtin_command(node, env, 1);
 	if (node->redir_out || node->redir_append)
 		dup2(cpy_stdout, STDOUT_FILENO);
-	return (0);
+	return (exit_status);
 }
