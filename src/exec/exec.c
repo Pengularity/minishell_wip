@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 10:04:08 by blax              #+#    #+#             */
-/*   Updated: 2024/01/25 20:50:30 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/26 15:40:46 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,15 +93,19 @@ void	execute_command_node(t_node *node, t_env *env)
 		return (ft_putstr_fd("Invalid command\n", STDERR_FILENO),
 			exit(EXIT_FAILURE));
 	if (node->id == 0 && node->next == NULL && is_builtin(node))
+	{
+		if (node->tab_exec[0] && ft_strcmp(node->tab_exec[0], "exit") == 0)
+			ft_putendl_fd("exit", STDOUT_FILENO);
 		exec_builtin(node, env);
+	}
 	else if (node->next != NULL)
 	{
 		envp = convert_env_to_tab(env);
-		exec_pipeline(node, envp);
+		exec_pipeline(node, envp, env);
 		free(envp);
 	}
-	else
-		execute_single_cmd(node, env);
+	// else
+	// 	execute_single_cmd(node, env);
 }
 
 
