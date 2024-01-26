@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   structures.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: letnitan <letnitan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 16:19:02 by blax              #+#    #+#             */
-/*   Updated: 2024/01/23 18:12:52 by letnitan         ###   ########.fr       */
+/*   Updated: 2024/01/26 17:52:35 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCTURES_H
-#define STRUCTURES_H
+# define STRUCTURES_H
 
-#include <stdbool.h>
-#include "enum.h"
+# include <stdbool.h>
+# include "enum.h"
 
 // typedef struct s_redirect
 // {
@@ -29,7 +29,7 @@ typedef struct s_env_link
 	char				*content;
 	struct s_env_link	*next;
 	struct s_env_link	*prev;
-} t_env_link;
+}		t_env_link;
 
 typedef struct s_env
 {
@@ -37,7 +37,7 @@ typedef struct s_env
 	unsigned int		lst_exit; // ? a sert a quoi ? renommer exit status
 	struct s_env_link	*first;
 	struct s_env_link	*last;
-} t_env;
+}		t_env;
 
 typedef struct s_token
 {
@@ -53,7 +53,7 @@ typedef struct s_token
 	//  int nb_two_single_quotes;
 	struct s_token		*next;
 	struct s_token		*prev;
-} t_token;
+}		t_token;
 
 typedef struct s_node
 {
@@ -65,7 +65,7 @@ typedef struct s_node
 	char				*redir_append;
 	char				*redir_heredoc;
 	struct s_node		*next;
-} t_node;
+}			t_node;
 
 typedef struct s_data
 {
@@ -81,6 +81,6 @@ typedef struct s_data
 	// t_env				*env;
 	struct s_token		*token;
 	struct s_node		*node;
-} t_data;
+}			t_data;
 
 #endif
