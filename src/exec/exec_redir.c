@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:15:34 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/27 16:19:36 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/27 19:45:39 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,35 @@ static int	redir_in(t_node *node)
 	return (EXIT_SUCCESS);
 }
 
-static int	redir_out(t_node *node)
-{
-	int	fd_out;
+// static int	redir_out(t_node *node)
+// {
+// 	int	fd_out;
 
-	fd_out = open(node->redir_out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd_out < 0)
+// 	fd_out = open(node->redir_out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+// 	if (fd_out < 0)
+// 		return (perror("open"), EXIT_FAILURE);
+// 	if (dup2(fd_out, STDOUT_FILENO) < 0)
+// 	{
+// 		close(fd_out);
+// 		return (perror("dup2"), EXIT_FAILURE);
+// 	}
+// 	close(fd_out);
+// 	return (EXIT_SUCCESS);
+// }
+
+static int	redir_out(int fd, const char *file)
+{
+	int	file_fd;
+
+	file_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (file_fd < 0)
 		return (perror("open"), EXIT_FAILURE);
-	if (dup2(fd_out, STDOUT_FILENO) < 0)
+	if (dup2(file_fd, fd) < 0)
 	{
-		close(fd_out);
+		close(file_fd);
 		return (perror("dup2"), EXIT_FAILURE);
 	}
-	close(fd_out);
+	close(file_fd);
 	return (EXIT_SUCCESS);
 }
 
@@ -78,25 +94,15 @@ static int	redir_heredoc(t_node *node)
 
 int	exec_redir(t_node *node)
 {
-	if (node->redir_in && ft_strlen(node->redir_in))
-	{
-		if (redir_in(node))
-			return (EXIT_FAILURE);
-	}
-	else if (node->redir_out && ft_strlen(node->redir_out))
-	{
-		if (redir_out(node))
-			return (EXIT_FAILURE);
-	}
-	else if (node->redir_append && ft_strlen(node->redir_append))
-	{
-		if (redir_append(node))
-			return (EXIT_FAILURE);
-	}
-	else if (node->redir_heredoc && ft_strlen(node->redir_heredoc))
-	{
-		if (redir_heredoc(node))
-			return (EXIT_FAILURE);
-	}
+	if (node->redir_in && redir_in(node))
+		return (EXIT_FAILURE);
+	if (node->redir_out && redir_out(STDOUT_FILENO, node->redir_out))
+		return (EXIT_FAILURE);
+	// if (node->redir_err && redir_out(STDERR_FILENO, node->redir_err))
+	// 	return (EXIT_FAILURE);
+	if (node->redir_append && redir_append(node))
+		return (EXIT_FAILURE);
+	if (node->redir_heredoc && redir_heredoc(node))
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
