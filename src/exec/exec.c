@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 10:04:08 by blax              #+#    #+#             */
-/*   Updated: 2024/01/26 17:39:48 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/27 11:12:35 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void	execute_single_cmd(t_node *node, t_env *env)
 	}
 	if (pid == 0)
 	{
+		if (exec_redir(node) == EXIT_FAILURE)
+			exit(EXIT_FAILURE);
 		envp = convert_env_to_tab(env);
 		execute_command(node, envp);
 		free(envp);
@@ -42,15 +44,21 @@ void	execute_single_cmd(t_node *node, t_env *env)
 void	execute_command_node(t_node *node, t_env *env)
 {
 	char	**envp;
+	int		stdout_backup;
 
+	stdout_backup = dup(STDOUT_FILENO);
 	if (!node || !node->tab_exec || !node->tab_exec[0] || node->type != N_CMD)
 		return (ft_putstr_fd("Invalid command\n", STDERR_FILENO),
 			exit(EXIT_FAILURE));
 	if (node->id == 0 && node->next == NULL && is_builtin(node))
 	{
+		if (exec_redir(node) == EXIT_FAILURE)
+			exit(EXIT_FAILURE);
 		if (node->tab_exec[0] && ft_strcmp(node->tab_exec[0], "exit") == 0)
 			ft_putendl_fd("exit", STDOUT_FILENO);
 		exec_builtin(node, env);
+		dup2(stdout_backup, STDOUT_FILENO);
+		close(stdout_backup);
 	}
 	else if (node->next != NULL)
 	{

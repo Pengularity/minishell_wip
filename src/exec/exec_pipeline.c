@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/25 18:04:50 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/26 17:42:45 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/27 10:38:04 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ void	exec_child_process(t_node *node, int in_fd, t_env *env, int *pipe_fds)
 	char	**envp;
 
 	envp = convert_env_to_tab(env);
+	if (exec_redir(node) == EXIT_FAILURE)
+		exit(EXIT_FAILURE);
 	if (in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)

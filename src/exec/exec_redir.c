@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_redic.c                                       :+:      :+:    :+:   */
+/*   exec_redir.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:15:34 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/26 19:11:16 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/27 10:53:22 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,16 +79,24 @@ static int	redir_heredoc(t_node *node)
 int	exec_redir(t_node *node)
 {
 	if (node->redir_in && ft_strlen(node->redir_in))
+	{
 		if (redir_in(node))
 			return (EXIT_FAILURE);
+	}
 	else if (node->redir_out && ft_strlen(node->redir_out))
+	{
 		if (redir_out(node))
 			return (EXIT_FAILURE);
+	}
 	else if (node->redir_append && ft_strlen(node->redir_append))
+	{
 		if (redir_append(node))
 			return (EXIT_FAILURE);
+	}
 	else if (node->redir_heredoc && ft_strlen(node->redir_heredoc))
+	{
 		if (redir_heredoc(node))
 			return (EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
