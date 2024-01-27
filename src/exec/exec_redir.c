@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:15:34 by wnguyen           #+#    #+#             */
-/*   Updated: 2024/01/27 10:53:22 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/27 16:19:36 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static int	redir_append(t_node *node)
 {
 	int	fd_append;
 
-	fd_append = open(node->redir_out, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	fd_append = open(node->redir_append, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd_append < 0)
 		return (perror("open"), EXIT_FAILURE);
 	if (dup2(fd_append, STDOUT_FILENO) < 0)

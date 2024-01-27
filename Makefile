@@ -50,8 +50,8 @@ SRC_FILES = main.c \
 			init/init_data.c \
 			init/init_env.c \
 			env/env_utils.c \
+			env/shlvl.c \
 			signals/signals.c \
-			# exec/file_redir.c \
 
 # TEST_FILES = common/ts_common.c \
 # 			lexer/ts_1.c \
