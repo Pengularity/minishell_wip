@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/30 18:23:51 by blax              #+#    #+#             */
-/*   Updated: 2024/01/27 17:06:18 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/27 17:58:16 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ int	main(int argc, char *argv[], char **env)
 	if (argc > 1)
 		return (printf("minishell : parameters : bad usage\n"), 0);
 	argv[0] = '\0';
+	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, handle_sigint);
 	if (!env || !env[0])
 		my_env = init_mini_env();

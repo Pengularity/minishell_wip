@@ -50,6 +50,7 @@ SRC_FILES = main.c \
 			init/init_data.c \
 			init/init_env.c \
 			env/env_utils.c \
+			env/env_utils_2.c \
 			env/shlvl.c \
 			signals/signals.c \
 

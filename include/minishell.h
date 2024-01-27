@@ -6,7 +6,7 @@
 /*   By: wnguyen <wnguyen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 08:31:10 by blax              #+#    #+#             */
-/*   Updated: 2024/01/27 17:02:38 by wnguyen          ###   ########.fr       */
+/*   Updated: 2024/01/27 19:23:28 by wnguyen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void			add_env_var(t_env *env, const char *name, const char *content);
 void			update_env_var(t_env *env, const char *name,
 					const char *content);
 char			*get_env_name(t_env *env, const char *name);
+char			*get_env_content(const char *str);
 char			*join_var_in_str(t_env_link *env_link);
 char			**convert_env_to_tab(t_env *env);
 void			update_shlvl(t_env *env);
